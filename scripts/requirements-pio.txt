@@ -1,0 +1,17 @@
+# PlatformIO venv pin file — install via:
+#   .venv-pio/bin/pip install -r scripts/requirements-pio.txt
+#
+# WHY THESE PINS:
+#
+# click<8.2
+#   click 8.2+ added a required `ctx` argument to ParamType.get_metavar(),
+#   breaking PlatformIO 6.1.x's bootloader build script for esp32c6 / esp32s3
+#   environments. Symptom is:
+#     TypeError: ParamType.get_metavar() missing 1 required positional argument: 'ctx'
+#     *** [.pio/build/<env>/bootloader.bin] Error 1
+#   esp32 / esp32c3 envs build fine without the pin (their bootloader script
+#   does not hit the affected click code path). Tracked in ESPresense-gww.
+#   Remove the pin once PlatformIO core ships a fix; recheck c6/s3 builds before.
+
+platformio>=6.1.19
+click<8.2
