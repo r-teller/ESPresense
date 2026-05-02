@@ -46,8 +46,8 @@ void Setup() {
  */
 void ConnectToWifi(bool updating) {
     std::vector<String> pinTypes = {"Pullup", "Pullup Inverted", "Pulldown", "Pulldown Inverted", "Floating", "Floating Inverted"};
-    button_1Type = HeadlessWiFiSettings.dropdown("button_1_type", pinTypes, 0, "Button One pin type");
-    button_1Pin = HeadlessWiFiSettings.integer("button_1_pin", -1, "Button One pin (-1 for disable)");
+    button_1Type = HeadlessWiFiSettings.dropdown("button_1_type", pinTypes, DEFAULT_BUTTON1_TYPE, "Button One pin type");
+    button_1Pin = HeadlessWiFiSettings.integer("button_1_pin", DEFAULT_BUTTON1_PIN, "Button One pin (-1 for disable)");
     button_1Timeout = HeadlessWiFiSettings.floating("button_1_timeout", 0, 300, DEFAULT_DEBOUNCE_TIMEOUT, "Button One timeout (in seconds)");
     button_1Detected = button_1Type & 0x01 ? LOW : HIGH;
 
