@@ -28,6 +28,17 @@ Log of gaps discovered during sessions. Each entry: what was needed, where the g
 - **Workaround used:** Wrote 3 navigator patches to `.archive/upstream-patches/`; applied locally.
 - **Resolution:** [RESOLVED] — local files at `.claude/agents/navigator/{recon,maintenance,survey}.md` updated to v1.2.0.
 
+### Calibration: implement-phase forecast over-estimates when PRD has verbatim diffs
+- **Symptom:** Forecasts consistently over-ran by 30-50% on nf5.1, .2/.3, .4, .5, .8 — all beads where the PRD had verbatim file diffs and the work was mechanical copy-and-verify rather than derivation.
+- **Root cause:** Forecasts were sized using "comparable prior items" rationale, which assumes some derivation work. When the PRD IS the contract (file:line + exact replacement text given), the implement phase is much shorter.
+- **Suggested fix:** When sizing a bead at `triage:ready`, if Cynefin is `clear` or `complicated` AND the description's Changes Needed table cites verbatim PRD content (vs. paraphrased intent), multiply implement-phase turn estimate by 0.6-0.8. Document this as a sizing note in `work-item-templates.md` Effort Forecast section.
+
+### Patterns worth promoting to rules/development-standards.md (firmware-specific)
+- **Logging:** Always `Log.print(...)` from `<Logger.h>` (extern via globals.h), never `Serial.print(...)`. Reason: Log mirrors to TCP port 6053 for remote debugging.
+- **Cross-module calls:** Both the caller and the callee's #include must be guarded by the same `#ifdef HAS_X`. Reason: any unguarded reference breaks non-HAS_X builds at link time.
+- **New module gating:** `#ifdef HAS_FEATURE` at file top wrapping the entire body; defaults macros in defaults.h gated by the same flag. Reason: empty TU is free at link time; runtime `if (!enabled) return` wastes flash.
+- **Suggested fix:** Discovered during nf5.6 implementation. File a chore bead to promote these to `rules/development-standards.md` with proper CORRECT/WRONG examples once 2-3 more modules cite them.
+
 ### Gap: scribe-init has no template/label/triage-state contract for bead creation
 - **Symptom:** Beads created via scribe-init have title + type only. No description, labels, or triage state. Forced manual stub-template touchup post-creation.
 - **Workaround used:** Wrote scribe-init patch + new scribe-refine agent in `.archive/upstream-patches/`; applied locally.
