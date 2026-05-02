@@ -31,6 +31,26 @@ template_entry:
   commits: ["abc1234", "def5678"]
 
 entries:
+  - version: "0.3.0"
+    date: "2026-05-02"
+    branch: "feature/athom-plug-v3"
+    focus: [stabilization, documentation]
+    summary: "Phase 2 build verification complete: 6/7 verification gates PASS, full 16-env matrix 10/16 PASS (6 c6/s3 envs hit pre-existing PlatformIO Python toolchain bug, filed gww)"
+    beads: [ESPresense-k56.1, ESPresense-k56.2, ESPresense-k56.3, ESPresense-k56.5, ESPresense-k56.6, ESPresense-k56.7, ESPresense-k56.8, ESPresense-k56.9, ESPresense-k56.10]
+    epic_progress: "ESPresense-k56 10% (1/10) → 100% (10/10)"
+    discovered:
+      - "ESPresense-gww: pio bootloader.bin generation TypeError on esp32c6/s3 envs (Python click API mismatch). Pre-existing, not a Phase 1 regression. Three remediation paths documented in the bead. CI is authoritative for those envs."
+    docs:
+      - "changed: PRD/README.md — Phase 2 ✅, with note on local matrix partial-pass and CI as authoritative gate"
+    findings:
+      - "Static analysis (cppcheck + clangtidy) PASSED on Phase 1 files; only stylistic medium-severity findings (C-style casts, const-correctness, missing braces). Pattern matches existing codebase style."
+      - "UI build is deterministic — empty git diff on consecutive npm run build invocations."
+      - "Relay::EarlyInit() boot-glitch invariant verified at main.cpp:644 (precedes Serial.begin)."
+      - "All 18 cross-module Relay::/CSE7766:: refs are #ifdef-guarded — no link-time risk on non-Athom envs."
+      - "Firmware size: Flash 61.3% (1.2MB / 1.96MB OTA partition); RAM 14.4% — well within budget."
+      - "Test infra observation: only formal test in tree (test_native_improv) is not runnable as configured (no [env:native] in platformio.ini, not wired into CI build.yml). Existing project state, not a Phase 1 regression. Worth surfacing in upstream PR but not blocking."
+    commits: []
+
   - version: "0.2.0"
     date: "2026-05-02"
     branch: "feature/athom-plug-v3"

@@ -21,6 +21,35 @@ template_entry:
   commits: ["abc1234", "def5678"]
 
 entries:
+  - date: "2026-05-02 09:00 UTC"
+    branch: "feature/athom-plug-v3"
+    focus: [stabilization, documentation]
+    completed:
+      - "ESPresense-k56.7: Boot-trace verified — Relay::EarlyInit at main.cpp:644 precedes Serial.begin (boot-glitch invariant preserved)"
+      - "ESPresense-k56.8: 18 cross-module Relay::/CSE7766:: refs all #ifdef-guarded (audited GUI.cpp, main.cpp, both modules' interactions)"
+      - "ESPresense-k56.6: UI build deterministic — empty git diff on consecutive npm run build"
+      - "ESPresense-k56.1: athom-smart-plug-v3 builds clean (Flash 61.3% / RAM 14.4%, only upstream NeoPixel LTO warning)"
+      - "ESPresense-k56.3: Firmware size captured for PR (1,205,972 / 1,966,080 bytes flash; 47,136 / 327,680 bytes RAM)"
+      - "ESPresense-k56.5: pio check (cppcheck + clangtidy) PASSED — only stylistic medium findings on Phase 1 files (C-style casts, const-correctness, missing braces, math.h vs cmath); no errors, no memory issues"
+      - "ESPresense-k56.2: PARTIAL — 10/16 envs PASS locally; 6 envs (esp32c6/s3 family) fail with environmental Python TypeError in pio bootloader script (NOT a Phase 1 regression, filed gww)"
+      - "ESPresense-k56.9: Closed as duplicate of 8s8.1 (both inspect /wifi/hardware endpoint; deferred to Phase 3)"
+      - "ESPresense-k56.10: Phase 2 close-out — PRD/README.md status updated, changelog v0.3.0, install guide published at docs/install-athom-from-esphome.md"
+      - "Phase 2 epic ESPresense-k56 closed at 100% (10/10)"
+      - "docs/install-athom-from-esphome.md published — covers Tasmota intermediate (recommended), direct ESPHome OTA (with partition-mismatch risk explanation), and USB recovery; includes pre-flash checklist, first-boot config, verification table, and known-limitations section"
+    discovered:
+      - "ESPresense-gww (P2 bug): pio bootloader.bin generation TypeError on esp32c6/s3 envs (Python click API mismatch). Pre-existing; CI is authoritative for those envs."
+      - "Pre-flash verification deepens: esptool image_info validates 5 segments + checksum; CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE is unset in arduino-esp32 pre-built bootloader (rollback not active despite Updater.cpp having mark-valid call ready); partition table layout mismatch with typical ESPHome on Athom V3 (ESPresense has eeprom + spiffs partitions; ESPHome typically uses littlefs only) — direct ESPHome OTA leaves partition table in place, causing SPIFFS mount failure post-boot."
+      - "Hardware testing strategy clarified: M5StickC Plus is best dual-purpose device (existing m5stickc-plus env, canonical Marauder platform) but doesn't 1:1 validate the C3 binary; recommend pairing with $4 generic ESP32-C3 dev board for binary-exact pre-flash test."
+    in_progress: []
+    blockers: []
+    next_steps:
+      - "Phase 3 — Hardware testing (epic ESPresense-8s8, 1/10 closed). Beads need scribe-refine before claim. Recommended order: flash via Tasmota intermediate path per docs/install-athom-from-esphome.md, then walk 8s8.1 (/wifi/hardware) → 8s8.2-9 (relay, button, CSE7766, MQTT, captive portal) → 8s8.10 close-out."
+      - "Phase 4 — PR submission (epic ESPresense-cly, 1/7 closed). Defer until Phase 3 complete. The upstream PR scope memory excludes .claude/, .beads/, .archive/, PRD/."
+      - "ESPresense-gww (P2): consider pinning click==8.1.7 in .venv-pio or upgrading PlatformIO core to fix local c6/s3 builds. Not blocking."
+      - "Optional: enable CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE by switching to IDF-as-component build mode. ~half-day work, would meaningfully improve OTA safety. Defer until needed."
+    epic_progress: "ESPresense-k56 10% (1/10) → 100% (10/10)"
+    commits: []  # commit hashes added on commit step
+
   - date: "2026-05-02 06:30 UTC"
     branch: "feature/athom-plug-v3"
     focus: [feature, infrastructure, documentation]

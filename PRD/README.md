@@ -47,6 +47,6 @@ Branch will be pushed to **https://github.com/r-teller/ESPresense** (the user's 
 
 - ✅ Design phase complete (this PRD captures all decisions)
 - ✅ Phase 1 — Implementation (complete 2026-05-02; 14/14 beads closed; epic ESPresense-nf5)
-- ⬜ Phase 2 — Build verification (epic ESPresense-k56, 1/10 closed)
+- ✅ Phase 2 — Build verification (complete 2026-05-02; 10/10 beads closed; epic ESPresense-k56). Local matrix 10/16 PASS — 6 esp32c6/s3 envs hit a pre-existing PlatformIO toolchain Python error unrelated to Phase 1; tracked in ESPresense-gww. CI on push is the authoritative gate.
 - ⬜ Phase 3 — Hardware testing (epic ESPresense-8s8, 1/10 closed)
 - ⬜ Phase 4 — PR submission (epic ESPresense-cly, 1/7 closed)
