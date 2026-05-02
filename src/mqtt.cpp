@@ -80,7 +80,7 @@ bool sendTeleBinarySensorDiscovery(const String &name, const String &entityCateg
     return pub(discoveryTopic.c_str(), 0, true, doc);
 }
 
-bool sendTeleSensorDiscovery(const String &name, const String &entityCategory, const String &temp, const String &devClass, const String &units)
+bool sendTeleSensorDiscovery(const String &name, const String &entityCategory, const String &temp, const String &devClass, const String &units, const String &stateClass)
 {
     auto slug = slugify(name);
 
@@ -94,12 +94,13 @@ bool sendTeleSensorDiscovery(const String &name, const String &entityCategory, c
     if (!entityCategory.isEmpty()) doc["entity_category"] = entityCategory;
     if (!units.isEmpty()) doc["unit_of_meas"] = units;
     if (!devClass.isEmpty()) doc["dev_cla"] = devClass;
+    if (!stateClass.isEmpty()) doc["stat_cla"] = stateClass;
 
     const String discoveryTopic = Sprintf("%s/sensor/espresense_%06x/%s/config", homeAssistantDiscoveryPrefix.c_str(),CHIPID, slug.c_str());
     return pub(discoveryTopic.c_str(), 0, true, doc);
 }
 
-bool sendSensorDiscovery(const String &name, const String &entityCategory, const String &devClass, const String &units, bool frcUpdate)
+bool sendSensorDiscovery(const String &name, const String &entityCategory, const String &devClass, const String &units, bool frcUpdate, const String &stateClass)
 {
     auto slug = slugify(name);
 
@@ -112,6 +113,7 @@ bool sendSensorDiscovery(const String &name, const String &entityCategory, const
     if (!entityCategory.isEmpty()) doc["entity_category"] = entityCategory;
     if (!units.isEmpty()) doc["unit_of_meas"] = units;
     if (!devClass.isEmpty()) doc["dev_cla"] = devClass;
+    if (!stateClass.isEmpty()) doc["stat_cla"] = stateClass;
     doc["frc_upd"] = frcUpdate;
 
     const String discoveryTopic = Sprintf("%s/sensor/espresense_%06x/%s/config", homeAssistantDiscoveryPrefix.c_str(), CHIPID, slug.c_str());
@@ -169,7 +171,7 @@ bool sendSwitchDiscovery(const String &name, const String &entityCategory)
     return pub(discoveryTopic.c_str(), 0, true, doc);
 }
 
-bool sendNumberDiscovery(const String &name, const String &entityCategory)
+bool sendNumberDiscovery(const String &name, const String &entityCategory, float min, float max, float step, const String &units, const String &mode)
 {
     auto slug = slugify(name);
 
@@ -180,7 +182,11 @@ bool sendNumberDiscovery(const String &name, const String &entityCategory)
     doc["avty_t"] = "~/status";
     doc["stat_t"] = "~/" + slug;
     doc["cmd_t"] = "~/" + slug + "/set";
-    doc["step"] = "0.1";
+    if (!isnan(min)) doc["min"] = min;
+    if (!isnan(max)) doc["max"] = max;
+    doc["step"] = step;
+    if (!units.isEmpty()) doc["unit_of_meas"] = units;
+    if (!mode.isEmpty()) doc["mode"] = mode;
     if (!entityCategory.isEmpty()) doc["entity_category"] = entityCategory;
 
     const String discoveryTopic = Sprintf("%s/number/espresense_%06x/%s/config", homeAssistantDiscoveryPrefix.c_str(), CHIPID, slug.c_str());

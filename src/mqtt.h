@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include <math.h>
 
 const char *const EC_DIAGNOSTIC = "diagnostic";
 const char *const EC_CONFIG = "config";
@@ -14,14 +15,14 @@ void commonDiscovery();
 bool sendConnectivityDiscovery();
 
 bool sendTeleBinarySensorDiscovery(const String &name, const String &entityCategory, const String &temp, const String &devClass = DEVICE_CLASS_NONE);
-bool sendTeleSensorDiscovery(const String &name, const String &entityCategory, const String &temp, const String &devClass = DEVICE_CLASS_NONE, const String &units = "");
+bool sendTeleSensorDiscovery(const String &name, const String &entityCategory, const String &temp, const String &devClass = DEVICE_CLASS_NONE, const String &units = "", const String &stateClass = "");
 
 bool sendBinarySensorDiscovery(const String &name, const String &entityCategory, const String &devClass = DEVICE_CLASS_NONE);
-bool sendSensorDiscovery(const String &name, const String &entityCategory, const String &devClass = DEVICE_CLASS_NONE, const String &units = "", bool frcUpdate = false);
+bool sendSensorDiscovery(const String &name, const String &entityCategory, const String &devClass = DEVICE_CLASS_NONE, const String &units = "", bool frcUpdate = false, const String &stateClass = "");
 
 bool sendButtonDiscovery(const String &name, const String &entityCategory);
 bool sendSwitchDiscovery(const String &name, const String &entityCategory);
-bool sendNumberDiscovery(const String &name, const String &entityCategory);
+bool sendNumberDiscovery(const String &name, const String &entityCategory, float min = NAN, float max = NAN, float step = 0.1f, const String &units = "", const String &mode = "");
 bool sendLightDiscovery(const String &name, const String &entityCategory, bool rgb, bool rgbw);
 
 bool sendDeleteDiscovery(const String &domain, const String &name);
