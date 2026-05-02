@@ -95,7 +95,13 @@
 #endif
 
 // I2C Defaults
-#ifdef M5STICK
+#ifdef ATHOM_PLUG_V3
+#define DEFAULT_I2C_BUS_1_SDA -1
+#define DEFAULT_I2C_BUS_1_SCL -1
+#define DEFAULT_I2C_BUS_2_SDA -1
+#define DEFAULT_I2C_BUS_2_SCL -1
+#define DEFAULT_I2C_BUS 1
+#elif defined M5STICK
 #define DEFAULT_I2C_BUS_1_SDA 32
 #define DEFAULT_I2C_BUS_1_SCL 33
 #define DEFAULT_I2C_BUS_2_SDA 21
@@ -178,6 +184,15 @@
 
 #define MAX_BRIGHTNESS 20
 
+#elif defined ATHOM_PLUG_V3
+
+#define DEFAULT_LED1_TYPE 1     // PWM Inverted — Athom blue LED is active LOW (GPIO6)
+#define DEFAULT_LED1_PIN 6
+#define DEFAULT_LED1_CNTRL Control_Type_Status
+#define DEFAULT_LED1_CNT 1
+
+#define MAX_BRIGHTNESS 100
+
 #else  // DevKit / generic
 
 #define DEFAULT_LED1_TYPE 0
@@ -187,4 +202,37 @@
 
 #define MAX_BRIGHTNESS 100
 
+#endif
+
+// Default Button 1 wiring per board (-1 = disabled, user configures via portal)
+#if defined ATHOM_PLUG_V3
+#define DEFAULT_BUTTON1_PIN 3
+#define DEFAULT_BUTTON1_TYPE 0    // Pullup — Athom power button is active LOW
+#else
+#define DEFAULT_BUTTON1_PIN -1
+#define DEFAULT_BUTTON1_TYPE 0
+#endif
+
+// Relay defaults (only when HAS_RELAY is enabled by the build env)
+#ifdef HAS_RELAY
+#if defined ATHOM_PLUG_V3
+#define DEFAULT_RELAY_PIN 5
+#define DEFAULT_RELAY_RESTORE_MODE 1   // Always On (matches ESPHome RESTORE_DEFAULT_ON)
+#else
+#define DEFAULT_RELAY_PIN -1
+#define DEFAULT_RELAY_RESTORE_MODE 0
+#endif
+#endif
+
+// CSE7766 power monitor defaults (only when HAS_POWER_MONITOR is enabled)
+#ifdef HAS_POWER_MONITOR
+#if defined ATHOM_PLUG_V3
+#define DEFAULT_CSE7766_RX_PIN 20
+#define DEFAULT_CURRENT_LIMIT_AMPS 16.0f   // Regulatory cap for US/EU/UK/IL/BR Athom plugs
+#define DEFAULT_POWER_UPDATE_INTERVAL 10   // seconds
+#else
+#define DEFAULT_CSE7766_RX_PIN -1
+#define DEFAULT_CURRENT_LIMIT_AMPS 0.0f
+#define DEFAULT_POWER_UPDATE_INTERVAL 10
+#endif
 #endif
