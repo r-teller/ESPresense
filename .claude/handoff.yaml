@@ -48,7 +48,7 @@ entries:
       - "ESPresense-gww (P2): consider pinning click==8.1.7 in .venv-pio or upgrading PlatformIO core to fix local c6/s3 builds. Not blocking."
       - "Optional: enable CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE by switching to IDF-as-component build mode. ~half-day work, would meaningfully improve OTA safety. Defer until needed."
     epic_progress: "ESPresense-k56 10% (1/10) → 100% (10/10)"
-    commits: []  # commit hashes added on commit step
+    commits: ["322cedb"]
 
   - date: "2026-05-02 06:30 UTC"
     branch: "feature/athom-plug-v3"
