@@ -31,6 +31,26 @@ template_entry:
   commits: ["abc1234", "def5678"]
 
 entries:
+  - version: "0.2.0"
+    date: "2026-05-02"
+    branch: "feature/athom-plug-v3"
+    focus: [feature, infrastructure, documentation]
+    summary: "Phase 1 close-out: Button GUI dispatch + factory reset, hardware-page UI sections, CI matrix entry — Phase 1 epic 100%"
+    beads: [ESPresense-nf5.10, ESPresense-nf5.13, ESPresense-nf5.9, ESPresense-nf5.11, ESPresense-nf5.14]
+    epic_progress: "ESPresense-nf5 64% (9/14) → 100% (14/14)"
+    backend:
+      - "added: src/Button.cpp edge-detection state machine — tap (<1s) → GUI::ButtonPressed(1) → Relay::toggle; 4s hold → SPIFFS.format + ESP.restart factory reset; existing /button_1 ON/OFF MQTT publishing preserved"
+      - "added: src/GUI.h/.cpp — ButtonPressed(int) and ButtonLongPressed(int) dispatchers (mirror GUI::Motion ↔ LEDs::Motion pattern); HAS_RELAY-guarded Relay::toggle call; factory reset NOT guarded by HAS_RELAY"
+      - "changed: src/Button.cpp portal defaults consume DEFAULT_BUTTON1_TYPE / DEFAULT_BUTTON1_PIN macros (Athom V3 = pin 3, Pullup; others stay -1 disabled)"
+    frontend:
+      - "added: ui/src/routes/hardware/+page.svelte — Relay section (pin + restore mode dropdown) and Power Monitor section (CSE7766 RX pin, current limit, update interval); name= attributes byte-match firmware HeadlessWiFiSettings keys"
+      - "changed: src/ui_*.h — regenerated 4 of 7 embedded headers (entry_js, nodes_js, html, routes); chunks_js, css, svg unchanged"
+    infra:
+      - "added: athom-smart-plug-v3 to .github/workflows/build.yml CI matrix (15th env; produces athom-smart-plug-v3.bin artifact on tag pushes and PR alpha builds)"
+    docs:
+      - "added: .claude/enhancements.md — 2026-05-02 entries (PRD Svelte syntax transcription artifact in nf5.11; missing ui/node_modules health check)"
+    commits: ["baea352", "511f937", "c90457a", "73240ba", "0d155b9"]
+
   - version: "0.1.0"
     date: "2026-05-01"
     branch: "feature/athom-plug-v3"

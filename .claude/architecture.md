@@ -124,6 +124,7 @@ Used by `/leroy` and `/gogogo` to verify the dev environment is ready.
 | PlatformIO | `.venv-pio/bin/pio --version 2>/dev/null \|\| pio --version` | `PlatformIO Core, version X.Y.Z` | Bootstrap project-local venv: `python3 -m venv .venv-pio && .venv-pio/bin/pip install platformio`. Either invoke `.venv-pio/bin/pio` directly or alias `pio-on='source .venv-pio/bin/activate'`. |
 | Node / npm | `node --version && npm --version` | both print versions | Install via system package manager or nvm. |
 | UI build outputs | `test -f src/ui_html.h && echo ok` | `ok` | Run `cd ui && npm install && npm run build` to regenerate headers. |
+| UI deps | `test -d ui/node_modules && echo ok \|\| echo missing` | `ok` | `cd ui && npm install` — required before `npm run build`; `node_modules/` is gitignored. |
 | Athom env builds | `.venv-pio/bin/pio run -e athom-smart-plug-v3 -t checkprogsize` | succeeds, prints flash usage | If linker errors: verify `src/Relay.cpp/.h` and `src/CSE7766.cpp/.h` exist (nf5.6/nf5.7) and `[env:athom-smart-plug-v3]` is in `platformio.ini` (nf5.5). |
 | Branch | `git branch --show-current` | `feature/athom-plug-v3` | If on `main`: `git checkout feature/athom-plug-v3`. |
 | r-teller remote | `git remote -v \| grep r-teller` | shows fork URL | `git remote add r-teller https://github.com/r-teller/ESPresense.git && git fetch r-teller`. |

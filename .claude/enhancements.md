@@ -39,6 +39,23 @@ Log of gaps discovered during sessions. Each entry: what was needed, where the g
 - **New module gating:** `#ifdef HAS_FEATURE` at file top wrapping the entire body; defaults macros in defaults.h gated by the same flag. Reason: empty TU is free at link time; runtime `if (!enabled) return` wastes flash.
 - **Suggested fix:** Discovered during nf5.6 implementation. File a chore bead to promote these to `rules/development-standards.md` with proper CORRECT/WRONG examples once 2-3 more modules cite them.
 
+## 2026-05-02 — feature/athom-plug-v3 close-out session
+
+### Gap: scribe-refine inlining a PRD verbatim block transcribed Svelte syntax incorrectly
+- **What was needed:** Faithful copy of `ui/src/routes/hardware/+page.svelte` Svelte template-binding syntax into the bead description.
+- **Symptom:** `nf5.11`'s refined Changes Needed contained `placeholder={.defaults['relay_pin']}` and `bind:value={.values['relay_pin']}` — the leading store name `$hardwareSettings` was lost. A naive copy-paste would have compiled (Svelte tolerates the partial-object reference) but never bound to the actual store, causing silent default-population breakage in the captive portal.
+- **Workaround used:** Read existing pattern in `+page.svelte:408-417` before pasting; manually corrected to `{$hardwareSettings.defaults[...]}` / `{$hardwareSettings.values[...]}`.
+- **Suggested fix:** When `scribe-refine` inlines a PRD verbatim block that includes templating/binding syntax, it should cross-check the contract against an existing reference implementation in the target file (the bead's "Patterns to Reuse" already names lines 408-417 — refine should diff against those). Alternatively: require the implementer to verify the verbatim block against a named reference pattern as a Readiness Checklist item, not just trust the PRD.
+
+### Gap: UI build deps (node_modules) not tracked; `/leroy` health check doesn't catch this
+- **Symptom:** Running `npm run build` after editing the Svelte file returned `sh: 1: vite: not found`. `architecture.md § Environment Health Checks` doesn't include a check for `ui/node_modules` presence.
+- **Workaround used:** `cd ui && npm install`.
+- **Resolution:** [RESOLVED] — Added `UI deps` row to `architecture.md § Environment Health Checks` (commit during nf5.14 close-out).
+
+---
+
+## Resolved (prior sessions)
+
 ### Gap: scribe-init has no template/label/triage-state contract for bead creation
 - **Symptom:** Beads created via scribe-init have title + type only. No description, labels, or triage state. Forced manual stub-template touchup post-creation.
 - **Workaround used:** Wrote scribe-init patch + new scribe-refine agent in `.archive/upstream-patches/`; applied locally.

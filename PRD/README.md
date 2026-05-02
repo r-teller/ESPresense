@@ -46,7 +46,7 @@ Branch will be pushed to **https://github.com/r-teller/ESPresense** (the user's 
 ## Status
 
 - ✅ Design phase complete (this PRD captures all decisions)
-- ⬜ Phase 1 — Implementation
-- ⬜ Phase 2 — Build verification
-- ⬜ Phase 3 — Hardware testing
-- ⬜ Phase 4 — PR submission
+- ✅ Phase 1 — Implementation (complete 2026-05-02; 14/14 beads closed; epic ESPresense-nf5)
+- ⬜ Phase 2 — Build verification (epic ESPresense-k56, 1/10 closed)
+- ⬜ Phase 3 — Hardware testing (epic ESPresense-8s8, 1/10 closed)
+- ⬜ Phase 4 — PR submission (epic ESPresense-cly, 1/7 closed)
