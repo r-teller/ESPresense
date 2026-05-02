@@ -52,6 +52,28 @@ Log of gaps discovered during sessions. Each entry: what was needed, where the g
 - **Workaround used:** `cd ui && npm install`.
 - **Resolution:** [RESOLVED] — Added `UI deps` row to `architecture.md § Environment Health Checks` (commit during nf5.14 close-out).
 
+### Retro 2026-05-02 — what went well, what burned time, calibration
+
+**Went well:**
+- Parallel `scribe-refine` dispatch on three beads concurrently — three ready beads in one round-trip rather than three sequential cycles.
+- Build verification after every commit (athom + esp32 + esp32c3) caught nothing but kept confidence high; no rework.
+- Catching the Svelte syntax artifact in nf5.11 *before* pasting verbatim — saved a silent runtime breakage that wouldn't have surfaced as a compile error.
+- Auto-close of `ESPresense-nf5` epic when `nf5.14` closed — confirms beads dependency graph is correctly modeling the epic boundary.
+
+**Burned time:**
+- `cd ui && npm install` was an unanticipated detour because `node_modules` is gitignored and there was no first-time-setup checklist for UI work. RESOLVED via the new health-check row.
+- Re-reading existing Svelte pattern before pasting added ~2 turns; the bead's "Patterns to Reuse" section (lines 408-417) was the saving grace — without it I'd have either trusted the broken `{.defaults[...]}` syntax or grep'd blindly.
+
+**Pattern worth promoting (workflow guidance, not code rule):**
+- **Rule:** When a refined bead's Changes Needed inlines a verbatim block of templating/binding/markup (Svelte, JSX, Mustache, etc.), do not paste blind. Cross-check against an existing reference implementation in the same file (typically named in "Patterns to Reuse") and reconcile any syntactic divergence before applying.
+- **Why:** Templating engines often tolerate partial syntax (Svelte accepts `{.foo['bar']}` as a valid expression — just not the one we want), so the failure surfaces as a runtime misconfiguration rather than a compile error. Build verification doesn't catch it.
+- **How to apply:** Add a single read of the cited reference range to the implementation pre-flight when the bead inlines templating syntax. Skip when the inlined block is plain code or PRD-grade verbatim text.
+- **Suggested fix for scribe-refine:** When inlining a verbatim block from PRD that targets a file already cited in "Patterns to Reuse", the agent should diff the verbatim block against the reference range in the target file and surface any syntactic mismatch as a refine warning.
+
+**Calibration validation:**
+- `nf5.9` (PRD verbatim diffs) ran ~10t actual vs ~14t forecast = 0.71x — confirms the prior session's 0.6-0.8x calibration note for cynefin:complicated beads with verbatim PRD content.
+- `nf5.11` (PRD verbatim diffs but with first-time UI setup overhead + syntax artifact correction) ran ~12t actual vs ~9t forecast = 1.33x. The overrun was non-implementation work (env bootstrap + bead-defect repair), not the implementation itself. **Implication:** the 0.6-0.8x calibration applies to *implementation phase* but should not be applied if the bead's environment isn't already proven-clean (no reference build run prior). For greenfield UI work, the first session always pays the npm-install tax — bake that into the test-phase estimate.
+
 ---
 
 ## Resolved (prior sessions)
