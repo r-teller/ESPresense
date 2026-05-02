@@ -477,6 +477,78 @@
             </label>
         </p>
         <h2>
+            <a href="https://espresense.com/configuration/settings#relay" target="_blank">Relay</a>
+        </h2>
+        <h4>Relay:</h4>
+        <p>
+            <label>
+                Pin (-1 to disable):<br />
+                <input
+                    type="number"
+                    step="1"
+                    min="-1"
+                    max="48"
+                    name="relay_pin"
+                    placeholder={$hardwareSettings.defaults['relay_pin']}
+                    bind:value={$hardwareSettings.values['relay_pin']}/>
+            </label>
+        </p>
+        <p>
+            <label>
+                State on Boot:<br />
+                <select name="relay_restore_mode" bind:value={$hardwareSettings.values['relay_restore_mode']}>
+                    <option disabled selected hidden>Always Off</option>
+                    <option value="0">Always Off</option>
+                    <option value="1">Always On</option>
+                    <option value="2">Restore Last</option>
+                </select>
+            </label>
+        </p>
+
+        <h2>
+            <a href="https://espresense.com/configuration/settings#power-monitor" target="_blank">Power Monitor</a>
+        </h2>
+        <h4>CSE7766 (Athom plugs and similar):</h4>
+        <p>
+            <label>
+                UART RX Pin (-1 to disable):<br />
+                <input
+                    type="number"
+                    step="1"
+                    min="-1"
+                    max="48"
+                    name="cse7766_rx_pin"
+                    placeholder={$hardwareSettings.defaults['cse7766_rx_pin']}
+                    bind:value={$hardwareSettings.values['cse7766_rx_pin']}/>
+            </label>
+        </p>
+        <p>
+            <label>
+                Auto-Trip Current Limit (Amps, 0 = disabled, max 16):<br />
+                <input
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    max="16"
+                    name="cse7766_current_limit"
+                    placeholder={$hardwareSettings.defaults['cse7766_current_limit']}
+                    bind:value={$hardwareSettings.values['cse7766_current_limit']}/>
+            </label>
+        </p>
+        <p>
+            <label>
+                Update Interval (seconds, 1-600):<br />
+                <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    max="600"
+                    name="cse7766_update_interval"
+                    placeholder={$hardwareSettings.defaults['cse7766_update_interval']}
+                    bind:value={$hardwareSettings.values['cse7766_update_interval']}/>
+            </label>
+        </p>
+        <h2>
             <a href="https://espresense.com/configuration/settings#i2c-settings" target="_blank">I2C Settings</a>
         </h2>
         <h4>Bus 1:</h4>
