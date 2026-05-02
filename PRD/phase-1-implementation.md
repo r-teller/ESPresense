@@ -23,20 +23,28 @@ If anything is dirty or unexpected, do not proceed. Commit/stash any work first.
 
 ## Step 0 — Repo setup (5 min)
 
-Add the user's fork as a remote (for pushing later in Phase 4) and create the working branch:
+The `feature/athom-plug-v3` branch already exists on the user's fork (r-teller) with the PRD docs as the first commit. Phase 1 layers code commits on top.
 
 ```bash
 cd /opt/git/personal/ESPresense
-git remote add r-teller https://github.com/r-teller/ESPresense.git || true
+
+# Ensure r-teller fork is configured as a remote
+git remote add r-teller https://github.com/r-teller/ESPresense.git 2>/dev/null || true
 git fetch r-teller
-git checkout -b feat/athom-smart-plug-v3
+
+# Check out the existing branch (or create local tracking if missing)
+git checkout feature/athom-plug-v3 2>/dev/null || git checkout -b feature/athom-plug-v3 r-teller/feature/athom-plug-v3
 ```
 
 Verify:
 ```bash
 git remote -v                       # should show origin (ESPresense/ESPresense) and r-teller (r-teller/ESPresense)
-git branch --show-current           # should be feat/athom-smart-plug-v3
+git branch --show-current           # should be feature/athom-plug-v3
+git log --oneline -1                # should show the PRD-docs commit at the tip
+ls PRD/                             # PRD directory should be in working tree
 ```
+
+If `git log` shows only the upstream main commit (no PRD), the branch wasn't fetched correctly — re-run `git fetch r-teller feature/athom-plug-v3` and try again.
 
 ## Step 1 — I²C-on-CDC fix in `defaults.h` (10 min, separate commit)
 
@@ -1431,7 +1439,7 @@ Capture the commit list:
 git log --oneline main..HEAD
 ```
 
-Expected output (~11 commits):
+Expected output (~10 code commits + 1 PRD commit = 11 total ahead of main):
 ```
 <hash> ui(hardware): regenerate UI build outputs
 <hash> ui(hardware): add Relay and Power Monitor configuration sections
@@ -1442,17 +1450,19 @@ Expected output (~11 commits):
 <hash> feat(athom): board defaults and Button1 pin override
 <hash> feat(mqtt): extend discovery helpers for HA Energy + bounded numbers
 <hash> fix(esp32c3): disable I2C defaults that conflict with USB-CDC
+8c737d7 docs: add PRD for Athom Smart Plug V3 ESPresense port    (← already exists, the base of this branch)
 ```
 
 ## Handoff to Phase 2
 
 When Phase 1 is complete, the following should be true:
 
-1. **Branch `feat/athom-smart-plug-v3` exists** with ~11 commits ahead of main.
+1. **Branch `feature/athom-plug-v3` exists** with the PRD-docs commit + ~9-10 code commits on top.
 2. **All commits build cleanly** when checked out individually (`git checkout <hash>` then `pio run -e <env>` succeeds).
 3. **Firmware binary** for athom-smart-plug-v3 is under 1920 KB.
 4. **No regressions**: every other env in the CI matrix still builds.
 5. **Working tree is clean** (`git status` shows nothing).
+6. **Branch is pushed to r-teller/feature/athom-plug-v3** so Phase 2 can `git pull` from any machine.
 
 Update `PRD/README.md` status section:
 ```
@@ -1461,7 +1471,7 @@ Update `PRD/README.md` status section:
 ```
 
 Record handoff metadata in `PRD/phase-1-handoff.md` (create this file in the new session):
-- Branch name: `feat/athom-smart-plug-v3`
+- Branch name: `feature/athom-plug-v3`
 - Commit count: 11 (or whatever final count)
 - Final commit hash: (record `git log -1 --format=%H`)
 - Firmware size: (record from `ls -la` above)

@@ -17,7 +17,7 @@
 
 ```bash
 cd /opt/git/personal/ESPresense
-git branch --show-current             # should be feat/athom-smart-plug-v3
+git branch --show-current             # should be feature/athom-plug-v3
 git status                            # should be clean
 ls PRD/phase-2-handoff.md             # confirm Phase 2 was completed
 cat PRD/phase-2-handoff.md            # read for any context
@@ -76,7 +76,7 @@ And under `defaults`:
 ```
 
 If those keys aren't present:
-- The user may have flashed an older build — re-confirm `firmware.bin` was the one from `feat/athom-smart-plug-v3`
+- The user may have flashed an older build — re-confirm `firmware.bin` was the one from `feature/athom-plug-v3`
 - Or the firmware version macros may not be wired correctly — check the boot log if accessible
 
 ### Confirm MQTT is connected

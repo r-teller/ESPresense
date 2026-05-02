@@ -6,14 +6,14 @@
 
 **Prerequisites**:
 - Phase 1 complete (see `PRD/phase-1-implementation.md`)
-- Branch `feat/athom-smart-plug-v3` exists with ~11 commits
+- Branch `feature/athom-plug-v3` exists with ~11 commits
 - Working tree clean (`git status`)
 
 ## Status check (run before starting)
 
 ```bash
 cd /opt/git/personal/ESPresense
-git branch --show-current             # should be feat/athom-smart-plug-v3
+git branch --show-current             # should be feature/athom-plug-v3
 git status                            # should be clean
 git log --oneline main..HEAD          # should show ~11 commits
 ls PRD/phase-1-handoff.md             # should exist (created at end of Phase 1)
@@ -22,7 +22,7 @@ cat PRD/phase-1-handoff.md            # read for any deviations from the PRD
 
 If branch isn't checked out:
 ```bash
-git checkout feat/athom-smart-plug-v3
+git checkout feature/athom-plug-v3
 ```
 
 If `phase-1-handoff.md` is missing or empty, Phase 1 wasn't fully completed — go back and finish it before running Phase 2.

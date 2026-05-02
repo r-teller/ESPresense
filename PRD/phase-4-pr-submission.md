@@ -8,13 +8,13 @@
 - Phase 3 complete (`PRD/phase-3-handoff.md` exists with test evidence)
 - All Phase 3 verification gates ✅
 - GitHub CLI (`gh`) authenticated for the user (run `gh auth status` to verify) OR ability to create PR via web UI
-- Branch `feat/athom-smart-plug-v3` is the active branch
+- Branch `feature/athom-plug-v3` is the active branch
 
 ## Status check (run before starting)
 
 ```bash
 cd /opt/git/personal/ESPresense
-git branch --show-current             # should be feat/athom-smart-plug-v3
+git branch --show-current             # should be feature/athom-plug-v3
 git status                            # should be clean
 git log --oneline main..HEAD          # should show ~11 commits
 ls PRD/phase-3-handoff.md             # should exist
@@ -49,10 +49,10 @@ Expected: ~11 commits, each with a clear conventional-commit-style message.
 ## Step 2 — Push to fork (5 min)
 
 ```bash
-git push -u r-teller feat/athom-smart-plug-v3
+git push -u r-teller feature/athom-plug-v3
 ```
 
-Expected output: GitHub URL like `https://github.com/r-teller/ESPresense/pull/new/feat/athom-smart-plug-v3`.
+Expected output: GitHub URL like `https://github.com/r-teller/ESPresense/pull/new/feature/athom-plug-v3`.
 
 If push fails:
 - `unable to access`: check authentication (`gh auth status`, or set up SSH key)
@@ -212,7 +212,7 @@ EOF
 gh pr create \
     --repo r-teller/ESPresense \
     --base main \
-    --head feat/athom-smart-plug-v3 \
+    --head feature/athom-plug-v3 \
     --title "Add Athom Smart Plug V3 support: relay, power monitor, BLE" \
     --body-file /tmp/pr-body.md \
     --draft
@@ -223,7 +223,7 @@ gh pr create \
 If the user prefers a non-draft PR (since this is their own fork, they may just want to merge themselves), drop `--draft`.
 
 If `gh` is not available, open the PR via the GitHub web UI:
-1. Browse to `https://github.com/r-teller/ESPresense/compare/main...feat/athom-smart-plug-v3`
+1. Browse to `https://github.com/r-teller/ESPresense/compare/main...feature/athom-plug-v3`
 2. Click "Create pull request"
 3. Paste title and body
 4. Mark as draft (or not)
@@ -265,15 +265,39 @@ The user's stated goal is upstream PR target, but for now they're pushing to the
 - Tag DTTerastar (the maintainer) for review
 - Be prepared for 2-3 rounds of feedback on naming/style/layering
 
-To open the upstream PR later:
+### ⚠️ Drop the PRD commit before upstreaming
+
+The `feature/athom-plug-v3` branch contains the PRD docs commit (`8c737d7`) at its base. **The PRD is a personal planning artifact and should NOT go upstream.** Before opening the upstream PR, create a clean branch that omits the PRD commit:
+
 ```bash
 cd /opt/git/personal/ESPresense
-git push origin feat/athom-smart-plug-v3      # push to upstream (if write access exists)
-# OR
-gh pr create --repo ESPresense/ESPresense --head r-teller:feat/athom-smart-plug-v3 ...
+
+# Identify the PRD commit hash (should be the first commit on the branch)
+PRD_COMMIT=$(git log feature/athom-plug-v3 --reverse --format=%H | head -1)
+echo "PRD commit to skip: $PRD_COMMIT"
+
+# Create a clean upstream-target branch starting from upstream/main,
+# then cherry-pick all code commits while skipping the PRD commit
+git fetch origin
+git checkout -b upstream-pr/athom-smart-plug-v3 origin/main
+git cherry-pick ${PRD_COMMIT}..feature/athom-plug-v3
+# (the cherry-pick range excludes the starting commit, so PRD_COMMIT is naturally dropped)
+
+# Push the clean branch to your fork
+git push -u r-teller upstream-pr/athom-smart-plug-v3
 ```
 
-(If user doesn't have write access to upstream, they'd push from their fork and `gh` knows how to create a cross-repo PR with `--head r-teller:feat/athom-smart-plug-v3`.)
+Then open the upstream PR from this clean branch:
+```bash
+gh pr create \
+    --repo ESPresense/ESPresense \
+    --base main \
+    --head r-teller:upstream-pr/athom-smart-plug-v3 \
+    --title "Add Athom Smart Plug V3 support: relay, power monitor, BLE" \
+    --body-file /tmp/pr-body.md
+```
+
+(`gh` knows how to create a cross-repo PR with `--head <fork-owner>:<branch>` syntax — user doesn't need write access to upstream.)
 
 This is OPTIONAL and not required for Phase 4 to be considered complete.
 
