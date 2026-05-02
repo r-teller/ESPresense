@@ -110,8 +110,14 @@
 #define DEFAULT_I2C_BUS 1
 #else
 #ifdef ESP32C3
+#if defined(ARDUINO_USB_CDC_ON_BOOT) && ARDUINO_USB_CDC_ON_BOOT == 1
+// GPIO18/19 are USB D-/D+ on CDC builds — defaulting to I²C would brick USB.
+#define DEFAULT_I2C_BUS_1_SDA -1
+#define DEFAULT_I2C_BUS_1_SCL -1
+#else
 #define DEFAULT_I2C_BUS_1_SDA 19
 #define DEFAULT_I2C_BUS_1_SCL 18
+#endif
 #define DEFAULT_I2C_BUS_2_SDA -1
 #define DEFAULT_I2C_BUS_2_SCL -1
 #define DEFAULT_I2C_BUS 1
