@@ -31,6 +31,24 @@ template_entry:
   commits: ["abc1234", "def5678"]
 
 entries:
+  - version: "0.3.1"
+    date: "2026-05-02"
+    branch: "feature/athom-plug-v3"
+    focus: [stabilization, infrastructure, documentation]
+    summary: "Toolchain fix: pinned click<8.2 in venv requirements, full local 16-env matrix now PASS; closed gww"
+    beads: [ESPresense-gww]
+    infra:
+      - "added: scripts/requirements-pio.txt — pins click<8.2 with explanatory comment; matches upstream CI's inline pin at .github/workflows/build.yml:36-39"
+      - "changed: .claude/architecture.md PlatformIO health-check row references requirements file from venv bootstrap step"
+    docs:
+      - "added: .claude/enhancements.md — 2 new entries (no bootloader rollback safety net; ESPHome→ESPresense partition mismatch) + close-out calibration note; marked PlatformIO PATH gap RESOLVED"
+      - "changed: ~/.claude/projects/.../memory/upstream_merge_scope.md — added scripts/requirements-pio.txt to upstream-PR exclusion list with rationale"
+    findings:
+      - "Root cause confirmed: click 8.2+ added required `ctx` argument to ParamType.get_metavar(); PlatformIO 6.1.x's bootloader script calls it positionally without it, breaking esp32c6/s3 envs only."
+      - "Upstream ESPresense CI already does the same pin inline (build.yml:36-39) — our solution matches established workaround."
+      - "Local matrix: was 10/16 PASS (Phase 2 close-out), now 16/16 PASS post-fix."
+    commits: ["2709281"]
+
   - version: "0.3.0"
     date: "2026-05-02"
     branch: "feature/athom-plug-v3"

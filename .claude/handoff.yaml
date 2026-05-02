@@ -21,6 +21,27 @@ template_entry:
   commits: ["abc1234", "def5678"]
 
 entries:
+  - date: "2026-05-02 19:30 UTC"
+    branch: "feature/athom-plug-v3"
+    focus: [stabilization, infrastructure, documentation]
+    completed:
+      - "ESPresense-gww: closed — pinned click<8.2 in scripts/requirements-pio.txt; all 6 previously-failing c6/s3 envs now build clean; full local matrix 16/16 PASS"
+      - "Confirmed upstream ESPresense CI already does the same click<8.2 pin inline (build.yml:36-39) — our solution matches established workaround"
+      - "Updated architecture.md PlatformIO health-check row to reference requirements-pio.txt from venv bootstrap step"
+      - "Updated upstream-merge-scope memory to add scripts/requirements-pio.txt to exclusion list (user decision: don't propose CI workflow refactor in the Athom PR)"
+      - "enhancements.md: marked PlatformIO PATH gap RESOLVED; added 3 new entries covering bootloader rollback limitation, ESPHome→ESPresense partition mismatch, and close-out doc-writing calibration"
+    discovered:
+      - "Bootloader rollback is not active in our build (CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=unset in arduino-esp32 pre-built bootloader). Application-side hooks exist (Updater.cpp:249 MarkOtaSuccess + arduino-esp32 initArduino) but bootloader doesn't enforce trial-window. Enabling requires IDF-as-component build mode — deferred until we have a concrete trigger."
+      - "Partition table mismatch between Athom factory ESPHome and ESPresense: ESPHome's web OTA only writes the app slot, leaving its partition table in place. ESPresense's SPIFFS partition doesn't exist in ESPHome's typical layout. Documented in docs/install-athom-from-esphome.md Path B with detection guidance."
+    in_progress: []
+    blockers: []
+    next_steps:
+      - "Phase 3 — Hardware testing (epic ESPresense-8s8, 1/10 closed). Run scribe-refine on the 9 open beads. Recommended flash path: Tasmota intermediate per docs/install-athom-from-esphome.md (avoids partition mismatch)."
+      - "Phase 4 — PR submission (epic ESPresense-cly, 1/7 closed). Defer until Phase 3 complete. Upstream PR exclusion list now covers .claude/, .beads/, .archive/, PRD/, scripts/requirements-pio.txt; docs/install-athom-from-esphome.md is a confirm-with-user item."
+      - "Optional future: enable CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE via IDF-as-component switch (~half-day work). Defer until needed."
+    epic_progress: "ESPresense-k56 100% (10/10) — no change since last entry; this round was post-Phase-2 toolchain work"
+    commits: ["2709281"]
+
   - date: "2026-05-02 09:00 UTC"
     branch: "feature/athom-plug-v3"
     focus: [stabilization, documentation]

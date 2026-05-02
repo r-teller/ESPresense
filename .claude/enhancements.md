@@ -10,7 +10,7 @@ Log of gaps discovered during sessions. Each entry: what was needed, where the g
 - **What was needed:** `pio` CLI to build firmware envs.
 - **Symptom:** `pio --version` returned `command not found` at session start. `architecture.md § Environment Health Checks` lists `pio --version` as a check but doesn't tell `/leroy` what to do when it fails.
 - **Workaround used:** `python3 -m venv .venv-pio && .venv-pio/bin/pip install platformio`. Added `.venv-pio/` to `.gitignore`.
-- **Suggested fix:** Update `architecture.md § Local Development` to include venv bootstrap step. Or add a `scripts/setup-pio.sh` helper. Either way, `/leroy`'s health check should suggest the fix command when `pio` is missing.
+- **Resolution:** [RESOLVED 2026-05-02] — `architecture.md § Environment Health Checks` PlatformIO row now references `scripts/requirements-pio.txt` for the bootstrap step (which also pins `click<8.2`, fixing ESPresense-gww). Future setup is reproducible from one command: `python3 -m venv .venv-pio && .venv-pio/bin/pip install -r scripts/requirements-pio.txt`.
 
 ### Gap: Workflow doesn't address bead descriptions that point to PRD instead of inlining spec
 - **What was needed:** Clear policy on whether `Open Questions: None — see PRD § X` is a valid form for `triage:ready`.
@@ -75,6 +75,22 @@ Log of gaps discovered during sessions. Each entry: what was needed, where the g
 - `nf5.11` (PRD verbatim diffs but with first-time UI setup overhead + syntax artifact correction) ran ~12t actual vs ~9t forecast = 1.33x. The overrun was non-implementation work (env bootstrap + bead-defect repair), not the implementation itself. **Implication:** the 0.6-0.8x calibration applies to *implementation phase* but should not be applied if the bead's environment isn't already proven-clean (no reference build run prior). For greenfield UI work, the first session always pays the npm-install tax — bake that into the test-phase estimate.
 
 ---
+
+## 2026-05-02 — Phase 2 close-out + gww fix session
+
+### Gap: Pre-flash safety net not available — CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE requires IDF-as-component build
+- **What was needed:** A way to mark new firmware as "trial" so a failed first boot auto-reverts to the previous firmware on the inactive OTA slot.
+- **Symptom:** Discovered while researching ESPHome→ESPresense flash safety. ESPresense's `Updater.cpp:249` (`MarkOtaSuccess`) and arduino-esp32's `initArduino()` both have the application-side rollback API calls wired, but `CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE` is unset in the pre-built arduino-esp32 bootloader, so `esp_ota_set_boot_partition()` marks the new slot as `ESP_OTA_IMG_VALID` immediately — no trial window, no automatic revert.
+- **Suggested fix:** Switch the build to ESP-IDF-as-component mode (`framework = espidf, arduino` in platformio.ini) which lets us override sdkconfig defaults. Half-day to a day of work. Meaningfully improves OTA safety for the Athom V3 specifically (no exposed USB → recovery requires case-cracking). Defer until we have a concrete trigger (e.g., a failed OTA in the field).
+
+### Gap: Partition table mismatch between ESPHome (factory firmware) and ESPresense
+- **What was needed:** Awareness that ESPHome's web OTA only writes the app slot, not the partition table at offset 0x8000. ESPresense's runtime then uses ESPHome's partition table, where the `spiffs` label doesn't exist (ESPHome typically uses `littlefs` at a different offset).
+- **Symptom:** Direct ESPHome→ESPresense web OTA appears to succeed, but `SPIFFS.begin()` silently fails post-boot. Settings persistence to `/relay_state`, `/update`, etc. silently does nothing. Captive portal still works (Wi-Fi credentials live in NVS, which both layouts share).
+- **Resolution:** [RESOLVED 2026-05-02] — Documented in `docs/install-athom-from-esphome.md` Path B section ("Risks of this path") with detection guidance. Path A (Tasmota intermediate) is recommended specifically because Tasmota's full-image upload rewrites the partition table.
+
+### Calibration: install guide added a doc-writing phase that wasn't in the close-out bead's effort forecast
+- **Symptom:** k56.10's stub-template effort estimate was ~10 min ("/wrapup-handled"). Actual was ~25 min including the install guide, which was scope-expansion at user request.
+- **Suggested fix:** When close-out beads include "publish guide" or similar user-facing artifact, the effort forecast should add an explicit doc-writing phase. Or split the artifact into its own chore bead.
 
 ## Resolved (prior sessions)
 
