@@ -19,3 +19,7 @@ src/build_timestamp_value.h
 playwright-report
 test-results
 .omc/
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
