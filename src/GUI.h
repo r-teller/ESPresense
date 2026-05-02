@@ -21,6 +21,8 @@ void Counting(BleFingerprint *f, bool added);
 void Motion(bool pir, bool radar);
 void Switch(bool switchone, bool switchtwo);
 void Button(bool switchone, bool switchtwo);
+void ButtonPressed(int btn);
+void ButtonLongPressed(int btn);
 void Seen(bool inprogress);
 void Update(unsigned int percent);
 void Connected(bool wifi, bool mqtt);

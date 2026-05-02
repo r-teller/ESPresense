@@ -23,6 +23,13 @@ int8_t lastbutton_2Value = -1;
 unsigned long lastbutton_2Milli = 0;
 bool online;
 
+bool button_1WasPressed = false;
+unsigned long button_1PressStart = 0;
+bool button_1LongPressFired = false;
+
+#define BUTTON_LONG_PRESS_MS       4000
+#define BUTTON_SHORT_PRESS_MAX_MS  1000
+
 void Setup() {
     std::vector<uint8_t> pinTypes = {INPUT_PULLUP, INPUT_PULLUP, INPUT_PULLDOWN, INPUT_PULLDOWN, INPUT, INPUT};
     if (button_1Pin >= 0) pinMode(button_1Pin, pinTypes[button_1Type]);
@@ -80,6 +87,23 @@ void SerialReport() {
 static void button_1Loop() {
     if (button_1Pin < 0) return;
     bool detected = digitalRead(button_1Pin) == button_1Detected;
+    unsigned long now = millis();
+
+    if (detected && !button_1WasPressed) {
+        button_1PressStart = now;
+        button_1LongPressFired = false;
+    } else if (!detected && button_1WasPressed) {
+        unsigned long held = now - button_1PressStart;
+        if (!button_1LongPressFired && held < BUTTON_SHORT_PRESS_MAX_MS) {
+            GUI::ButtonPressed(1);
+        }
+    } else if (detected && !button_1LongPressFired
+               && (now - button_1PressStart) >= BUTTON_LONG_PRESS_MS) {
+        button_1LongPressFired = true;
+        GUI::ButtonLongPressed(1);
+    }
+    button_1WasPressed = detected;
+
     if (detected) lastbutton_1Milli = millis();
     unsigned long since = millis() - lastbutton_1Milli;
     int button_1Value = (detected || since < (button_1Timeout * 1000)) ? HIGH : LOW;

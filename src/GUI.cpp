@@ -1,10 +1,16 @@
 #include "GUI.h"
 
+#include <SPIFFS.h>
+
 #include "BleFingerprintCollection.h"
 #include "Display.h"
 #include "LEDs.h"
 #include "defaults.h"
 #include "Logger.h"
+
+#ifdef HAS_RELAY
+#include "Relay.h"
+#endif
 
 namespace GUI {
 /**
@@ -240,5 +246,20 @@ bool SendDiscovery() {
 
 void Count(unsigned int count) {
     LEDs::Count(count);
+}
+
+void ButtonPressed(int btn) {
+    Log.printf("Button %d short-pressed\r\n", btn);
+#ifdef HAS_RELAY
+    if (btn == 1) Relay::toggle();
+#endif
+}
+
+void ButtonLongPressed(int btn) {
+    Log.printf("Button %d long-pressed (4s) — factory reset\r\n", btn);
+    if (btn != 1) return;
+    SPIFFS.format();
+    delay(100);
+    ESP.restart();
 }
 }  // namespace GUI
