@@ -1,0 +1,61 @@
+# Changelog — structured session log
+# Each entry is one session/branch. Newest first.
+# gogogo reads entries[0]; wrapup prepends to the top of entries[].
+# Each area bullet is prefixed with added:|changed:|fixed: to indicate change type.
+#
+# Version Numbering (SemVer):
+#   MAJOR (X.0.0) — incompatible / breaking API changes
+#   MINOR (0.X.0) — new features, backwards-compatible
+#   PATCH (0.0.X) — bug fixes, minor improvements
+#   MVP: use 0.x.x while iterating; bump to 1.0.0 when core features are stable
+#
+# IMPORTANT: Always quote commit hashes — e.g. ["abc1234"] not [abc1234].
+
+template_entry:
+  version: "0.X.Y"
+  date: "YYYY-MM-DD"
+  branch: "feature/work-YYYYMMDD-HHMM-short-description"
+  focus: [feature, bugfix, refactor, infrastructure, documentation, stabilization]
+  summary: "One-line summary of the session's work"
+  beads: [bead-id-1, bead-id-2]
+  epic_progress: "epic-id XX% → YY%"
+  backend:
+    - "added: Models/API/service changes"
+  frontend:
+    - "changed: Pages/components/UX changes"
+  infra:
+    - "added: Migrations, config, tooling, CI changes"
+  docs:
+    - "added: Context docs, commands, workflow changes"
+  tests: "N new/updated, M total passing"
+  commits: ["abc1234", "def5678"]
+
+entries:
+  - version: "0.1.0"
+    date: "2026-05-01"
+    branch: "feature/athom-plug-v3"
+    focus: [feature, infrastructure]
+    summary: "Phase 1 firmware port: ESPresense gains Athom Smart Plug V3 support — relay, power monitor, build env, lifecycle wiring"
+    beads: [ESPresense-nf5.1, ESPresense-nf5.2, ESPresense-nf5.3, ESPresense-nf5.4, ESPresense-nf5.5, ESPresense-nf5.6, ESPresense-nf5.7, ESPresense-nf5.8]
+    epic_progress: "ESPresense-nf5 7% (1/14) → 64% (9/14)"
+    backend:
+      - "added: src/Relay.cpp/.h — output module gated on HAS_RELAY (EarlyInit boot-glitch defense, restore modes 0/1/2, /relay_state SPIFFS persistence, trip-persistence override, MQTT publish/subscribe, sendSwitchDiscovery)"
+      - "added: src/CSE7766.cpp/.h — UART power monitor gated on HAS_POWER_MONITOR (4800 8E1 RX-only, packet validation w/ slide-by-1 resync, calibration math w/ silent-hold, NaN cold-start, JSON-coalesced telemetry, energy accumulation w/ 5min/10Wh persistence, latching trip)"
+      - "changed: src/mqtt.h/.cpp — sendSensorDiscovery + sendTeleSensorDiscovery accept defaulted stateClass arg; sendNumberDiscovery replaced fixed step with min/max/step/units/mode (NaN sentinels preserve existing callers)"
+      - "changed: src/globals.h — DynamicJsonDocument 768 → 1024 (absorbs new state_class field)"
+      - "changed: src/main.h — added Relay.h + CSE7766.h includes, both #ifdef-guarded"
+      - "changed: src/main.cpp — 9 lifecycle insertion points (EarlyInit before Serial.begin, ConnectToWifi cascade, Setup, SerialReport, SendDiscovery chain, SendOnline chain, Command chain, loop()), all #ifdef HAS_RELAY/HAS_POWER_MONITOR-guarded"
+      - "fixed: include/defaults.h — gated ESP32C3 I2C bus 1 GPIO 18/19 defaults behind !ARDUINO_USB_CDC_ON_BOOT (USB D-/D+ collision was silently bricking USB-CDC builds)"
+      - "added: include/defaults.h — ATHOM_PLUG_V3 LED arm (pin=6 PWM-Inverted), Button1 defaults, Relay defaults gated on HAS_RELAY, CSE7766 defaults gated on HAS_POWER_MONITOR, ATHOM I2C override (all -1)"
+    infra:
+      - "added: platformio.ini [env:athom-smart-plug-v3] env (extends esp32c3-cdc, sets ATHOM_PLUG_V3 + HAS_RELAY + HAS_POWER_MONITOR, FIRMWARE='\"athom-smart-plug-v3\"', drops sensors.lib_deps)"
+      - "changed: .gitignore — excludes .venv-pio/ (project-local PlatformIO venv)"
+    docs:
+      - "added: .archive/upstream-patches/ — 4 patch files for vibe-templates upstream (navigator-recon triage filter, navigator-maintenance triage gate, navigator-survey triage gate, scribe-init template-aware creation + new scribe-refine agent)"
+      - "changed: .claude/agents/navigator/{recon,maintenance,survey}.md — applied triage-state filtering patches locally (v1.1.0 → v1.2.0)"
+      - "changed: .claude/agents/scribe/scribe-init.md — applied template-aware creation patch (unversioned → v2.0.0)"
+      - "added: .claude/agents/scribe/scribe-refine.md — new bead enrichment agent (v1.0.0)"
+      - "changed: .claude/skills/scribe/SKILL.md — registered scribe-refine (v1.0.0 → v1.1.0)"
+      - "added: .claude/enhancements.md — log of doc gaps discovered this session"
+    commits: ["8ae56af", "6fbf0f5", "49a6f62", "cdefab8", "9f9f121", "f81d179", "39e1256", "70aa0cb"]
+

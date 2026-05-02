@@ -1,0 +1,53 @@
+# Handoff — session state log
+# Captures where work stands at end of each session.
+# gogogo/leroy reads entries[0]; wrapup prepends a new entry.
+# IMPORTANT: Always quote commit hashes — e.g. ["abc1234"] not [abc1234].
+
+template_entry:
+  date: "YYYY-MM-DD HH:MM UTC"
+  branch: "feature/work-YYYYMMDD-HHMM-short-description"
+  focus: [feature, bugfix, refactor, infrastructure, documentation, stabilization]
+  completed:
+    - "bead-id: what was accomplished"
+  discovered:
+    - "bead-id: new feature/bug filed this session"
+  in_progress:
+    - "bead-id: current state of partial work"
+  blockers:
+    - "bead-id: what's stuck and why"
+  next_steps:
+    - "bead-id: what to do next, in priority order"
+  epic_progress: "epic-id XX% → YY%"
+  commits: ["abc1234", "def5678"]
+
+entries:
+  - date: "2026-05-01 23:30 UTC"
+    branch: "feature/athom-plug-v3"
+    focus: [feature, infrastructure, documentation]
+    completed:
+      - "ESPresense-nf5.1: I2C-on-CDC default GPIO collision fixed (commit 8ae56af)"
+      - "ESPresense-nf5.2: JsonDocument buffer 768 → 1024 (folded into 6fbf0f5)"
+      - "ESPresense-nf5.3: mqtt discovery helpers extended w/ stateClass + bounded numbers (6fbf0f5)"
+      - "ESPresense-nf5.4: ATHOM_PLUG_V3 defaults block added (49a6f62)"
+      - "ESPresense-nf5.5: platformio.ini env [env:athom-smart-plug-v3] (f81d179)"
+      - "ESPresense-nf5.6: Relay module gated on HAS_RELAY (cdefab8)"
+      - "ESPresense-nf5.7: CSE7766 power monitor module gated on HAS_POWER_MONITOR (9f9f121)"
+      - "ESPresense-nf5.8: main.cpp lifecycle wiring (9 insertion points + 2 includes) (70aa0cb)"
+    discovered:
+      - "Vibe-templates upstream gaps — 4 patches in .archive/upstream-patches/ (navigator-recon triage filter, navigator-maintenance + survey triage gates, scribe-init template-aware creation + scribe-refine agent). All 4 also applied locally to .claude/agents/."
+      - ".venv-pio/ added to .gitignore — project-local PlatformIO venv (39e1256)"
+      - ".claude/enhancements.md created — log of 5 doc gaps from this session"
+      - "nf5.11 dependencies formalized: blocked-by nf5.6 + nf5.7 (added mid-session)"
+    in_progress: []
+    blockers:
+      - "nf5.11 (UI hardware page Svelte): still triage:triaged. Now dependency-clear since nf5.6/.7 closed, but bead description is Stub Template only and references PRD § Step 13. Run scribe-refine before claim."
+    next_steps:
+      - "nf5.13: Update Button.cpp to consume DEFAULT_BUTTON1_* macros (P1, triage:triaged — lightest remaining work, run scribe-refine first)"
+      - "nf5.9: Button → GUI dispatch + factory reset (P1, depends on nf5.6/.7 ✓ closed; triage:triaged — needs scribe-refine to inline PRD § Step 8/9 spec)"
+      - "nf5.11: UI hardware page Svelte + regenerate ui_*.h (P1, depends on nf5.6/.7 ✓ closed; needs scribe-refine — UI form name= attrs must match firmware HeadlessWiFiSettings keys defined in nf5.6/.7)"
+      - "nf5.10: CI matrix entry for athom-smart-plug-v3 in .github/workflows/build.yml (P2, simple chore)"
+      - "nf5.14: Update PRD status + close-out Phase 1 (depends on nf5.11)"
+      - "Optional: backfill scribe-refine on closed nf5.6/.7 to inline implementation contract for historical record (cleanliness only — not blocking)"
+    epic_progress: "ESPresense-nf5 7% (1/14) → 64% (9/14)"
+    commits: ["8ae56af", "6fbf0f5", "49a6f62", "cdefab8", "9f9f121", "f81d179", "39e1256", "70aa0cb"]
+
