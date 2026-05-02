@@ -23,3 +23,6 @@ test-results
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+
+# Project-local PlatformIO venv
+.venv-pio/
