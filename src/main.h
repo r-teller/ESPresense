@@ -33,6 +33,12 @@
 #ifdef M5STICK
 #include <AXP192.h>
 #endif
+#ifdef HAS_RELAY
+#include "Relay.h"
+#endif
+#ifdef HAS_POWER_MONITOR
+#include "CSE7766.h"
+#endif
 #ifdef SENSORS
 #include <Wire.h>
 

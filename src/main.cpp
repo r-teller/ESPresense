@@ -45,6 +45,12 @@ bool sendTelemetry(unsigned int totalSeen, unsigned int totalFpSeen, unsigned in
             && Motion::SendOnline()
             && Switch::SendOnline()
             && Button::SendOnline()
+#ifdef HAS_RELAY
+            && Relay::SendOnline()
+#endif
+#ifdef HAS_POWER_MONITOR
+            && CSE7766::SendOnline()
+#endif
             && GUI::SendOnline()
         ) {
             online = true;
@@ -68,6 +74,12 @@ bool sendTelemetry(unsigned int totalSeen, unsigned int totalFpSeen, unsigned in
             && Motion::SendDiscovery()
             && Switch::SendDiscovery()
             && Button::SendDiscovery()
+#ifdef HAS_RELAY
+            && Relay::SendDiscovery()
+#endif
+#ifdef HAS_POWER_MONITOR
+            && CSE7766::SendDiscovery()
+#endif
             && Enrollment::SendDiscovery()
             && Battery::SendDiscovery()
             && CAN::SendDiscovery()
@@ -207,6 +219,12 @@ void setupNetwork() {
     Motion::ConnectToWifi(updating);
     Switch::ConnectToWifi(updating);
     Button::ConnectToWifi(updating);
+#ifdef HAS_RELAY
+    Relay::ConnectToWifi(updating);
+#endif
+#ifdef HAS_POWER_MONITOR
+    CSE7766::ConnectToWifi(updating);
+#endif
 
 #ifdef SENSORS
     DHT::ConnectToWifi(updating);
@@ -271,6 +289,12 @@ void setupNetwork() {
     Motion::SerialReport();
     Switch::SerialReport();
     Button::SerialReport();
+#ifdef HAS_RELAY
+    Relay::SerialReport();
+#endif
+#ifdef HAS_POWER_MONITOR
+    CSE7766::SerialReport();
+#endif
 #ifdef SENSORS
     I2C::SerialReport();
     DHT::SerialReport();
@@ -389,6 +413,14 @@ void onMqttMessage(const char *topic, const char *payload) {
             changed = true;
         else if (Button::Command(command, pay))
             changed = true;
+#ifdef HAS_RELAY
+        else if (Relay::Command(command, pay))
+            changed = true;
+#endif
+#ifdef HAS_POWER_MONITOR
+        else if (CSE7766::Command(command, pay))
+            changed = true;
+#endif
         if (changed) online = false;
     } else {
     skip:
@@ -608,6 +640,9 @@ void scanTask(void *parameter) {
  * starts the BLE scan task, and performs MQTT/reporting setup.
  */
 void setup() {
+#ifdef HAS_RELAY
+    Relay::EarlyInit();   // drive relay GPIO LOW immediately to avoid boot-glitch
+#endif
 #ifdef FAST_MONITOR
     Serial.begin(1500000);
 #else
@@ -636,6 +671,12 @@ void setup() {
     Motion::Setup();
     Switch::Setup();
     Button::Setup();
+#ifdef HAS_RELAY
+    Relay::Setup();
+#endif
+#ifdef HAS_POWER_MONITOR
+    CSE7766::Setup();
+#endif
     Battery::Setup();
     CAN::Setup();
     NTP::Setup();
@@ -684,6 +725,12 @@ void loop() {
     Motion::Loop();
     Switch::Loop();
     Button::Loop();
+#ifdef HAS_RELAY
+    Relay::Loop();
+#endif
+#ifdef HAS_POWER_MONITOR
+    CSE7766::Loop();
+#endif
     HttpWebServer::Loop();
     SerialImprov::Loop(false);
     NTP::Loop();
